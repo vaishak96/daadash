@@ -5,6 +5,7 @@ import os
 import warnings
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2.service_account import Credentials
 import numpy as np
 
 warnings.filterwarnings('ignore')
@@ -16,19 +17,21 @@ st.set_page_config(page_title="Superstore!!!", page_icon=":bar_chart:", layout="
 st.title(" :bar_chart: Sample SuperStore EDA")
 st.markdown('<style>div.block-container{padding-top:2rem;}</style>', unsafe_allow_html=True)
 
-# Google Sheets setup
-scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-creds = ServiceAccountCredentials.from_json_keyfile_name('./config.json', scope)
+# Google Sheets setup using Streamlit Secrets
+creds = Credentials.from_service_account_info(st.secrets["gspread"], scopes=[
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive'
+])
 client = gspread.authorize(creds)
 
- # Open the spreadsheet by its URL
+# Open the spreadsheet by its URL
 spreadsheet_url = "https://docs.google.com/spreadsheets/d/18HsrafM5ggen4G7KJbfZoFmm7hIpouPCEs9Mxiv9kYc"
 workbook = client.open_by_url(spreadsheet_url)
-    
- # Select the first sheet
+
+# Select the first sheet
 worksheet = workbook.get_worksheet(0)
-    
- # Get all the records of the data
+
+# Get all the records of the data
 records = worksheet.get_all_records()
 
  # Convert to DataFrame
@@ -36,7 +39,6 @@ data = pd.DataFrame(records)
 
 
 
-st.write("Data from Google Sheet:", data)
 print(data.info())
 columns_to_convert = ['Count', 'Hybrid', 'Remote', 'In Person', 'Total Check']
 
@@ -58,9 +60,9 @@ data['Total Check'] = data['Total Check'].fillna(data[['Hybrid', 'Remote', 'In P
 
 
 
-print(data.info())
 
-st.write("Data1", data)
+
+
 
 
 
@@ -74,8 +76,7 @@ idx = data.groupby(['Title', data['Date'].dt.date])['Date'].idxmax()
 # Filter data based on the indices to keep only the most recent records
 data = data.loc[idx].reset_index(drop=True)
 
-# Display data as a table
-st.write("Data from CSV:", data)
+
 
 
 
@@ -102,8 +103,6 @@ with col2:
         date2 = endDate
 
 df = data[(data["Date"] >= date1) & (data["Date"] <= date2)].copy()
-st.write("date1", date1)
-st.write("date2", date2)
 
 
 st.sidebar.header("Choose your filter: ")
@@ -115,7 +114,6 @@ else:
     df2 = df[df["Title"].isin(title)]
 
 
-st.write("Data from title:", df2)
 
 df2['Count'] = df2['Count'].replace(',', '', regex=True).astype(int)
 df2['Hybrid'] = df2['Hybrid'].replace(',', '', regex=True).astype(float)
@@ -172,8 +170,7 @@ with col2:
     fig2.update_traces(textposition='inside')
     st.plotly_chart(fig2, use_container_width=True)
 
-st.write(recent_mean_counts)
-st.write(df2["In Person"])
+
 
 
 
