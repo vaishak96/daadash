@@ -40,7 +40,7 @@ data = pd.DataFrame(records)
 
 
 print(data.info())
-columns_to_convert = ['Count', 'Hybrid', 'Remote', 'In Person', 'Total Check']
+columns_to_convert = ['Count', 'Hybrid', 'Remote', 'In Person']
 
 for column in columns_to_convert:
     # Replace commas and convert empty strings to NaN
@@ -56,7 +56,6 @@ data.dropna(subset=['Date', 'Title'], how='all', inplace=True)
 
 
 data['Count'] = data['Count'].fillna(data[['Hybrid', 'Remote', 'In Person']].sum(axis=1))
-data['Total Check'] = data['Total Check'].fillna(data[['Hybrid', 'Remote', 'In Person']].sum(axis=1))
 
 
 
