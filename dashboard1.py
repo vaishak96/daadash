@@ -11,10 +11,10 @@ import numpy as np
 warnings.filterwarnings('ignore')
 
 # Set up the page configuration
-st.set_page_config(page_title="Superstore!!!", page_icon=":bar_chart:", layout="wide")
+st.set_page_config(page_title="Linkden Job Statistics!!!", page_icon=":bar_chart:", layout="wide")
 
 # Title of the dashboard
-st.title(" :bar_chart: Sample SuperStore EDA")
+st.title(" :bar_chart: Linkden Job Statistics!!!")
 st.markdown('<style>div.block-container{padding-top:2rem;}</style>', unsafe_allow_html=True)
 
 # Google Sheets setup using Streamlit Secrets
