@@ -59,14 +59,6 @@ data['Count'] = data['Count'].fillna(data[['Hybrid', 'Remote', 'In Person']].sum
 
 
 
-
-
-
-
-
-
-
-
 # Ensuring 'Date' is in datetime format
 data['Date'] = pd.to_datetime(data['Date'])
 
@@ -102,6 +94,20 @@ with col2:
         date2 = endDate
 
 df = data[(data["Date"] >= date1) & (data["Date"] <= date2)].copy()
+
+skill_titles = ['Excel', 'Power BI', 'Tableau', 'SQL', 'Python']
+data['Dataset'] = data['Title'].apply(lambda x: 'Skill' if x in skill_titles else 'Job Title')
+dataset1 = data[data['Dataset'] == 'Skill']
+dataset2 = data[data['Dataset'] == 'Job Title']
+
+# Sidebar selection for dataset
+st.sidebar.header("Choose your dataset: ")
+chosen_dataset = st.sidebar.radio("Select a dataset:", ('Skill', 'Job Title'))
+
+if chosen_dataset == 'Skill':
+    df = dataset1.copy()
+else:
+    df = dataset2.copy()
 
 
 st.sidebar.header("Choose your filter: ")
